@@ -1,80 +1,20 @@
 "use client";
-
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, BarChart3, CalendarClock, Check, ChevronDown, Menu, MonitorSmartphone, Play, ShieldCheck, Wand2, X } from "lucide-react";
+import { ArrowRight, BarChart3, CalendarClock, Check, Menu, MonitorSmartphone, Play, Search, Settings2, TrendingUp, X } from "lucide-react";
 import { Logo } from "./logo";
 import styles from "./landing.module.css";
-
-const features = [
-  { icon: CalendarClock, title: "Publicação multicanal", text: "Organize calendários e conteúdos de TikTok, Instagram Reels e YouTube Shorts em uma única fila." },
-  { icon: Wand2, title: "Editor de variações", text: "Prepare formatos, cortes, legendas, cores e overlays diferentes sem sair da plataforma." },
-  { icon: MonitorSmartphone, title: "Perfis e dispositivos", text: "Acompanhe contas, sessões autorizadas e a saúde dos aparelhos em uma visão operacional." },
-  { icon: BarChart3, title: "Analytics que orienta", text: "Compare alcance, engajamento, receita e conteúdos com melhor desempenho por período." },
-];
-
-const plans = [
-  { name: "Inicial", price: "297", description: "Para começar a organizar sua operação.", items: ["Até 5 perfis", "Calendário editorial", "Analytics essenciais", "Publicação multicanal"] },
-  { name: "Profissional", price: "697", description: "Para operações que precisam crescer.", popular: true, items: ["Até 24 perfis", "Editor de variações", "Relatórios completos", "Suporte prioritário"] },
-  { name: "Agência", price: "1.497", description: "Para times e múltiplos projetos.", items: ["Até 60 perfis", "Múltiplos usuários", "Exportações avançadas", "Onboarding dedicado"] },
-];
-
-const faqs = [
-  ["O TK2PHARMPRO publica em quais plataformas?", "O painel foi desenhado para centralizar fluxos de TikTok, Instagram Reels e YouTube Shorts."],
-  ["Preciso instalar alguma coisa?", "A gestão acontece pelo navegador. Integrações com plataformas e dispositivos dependem da configuração de cada conta."],
-  ["Posso cancelar quando quiser?", "Sim. Os planos são mensais e podem ser alterados ou cancelados antes da próxima renovação."],
-  ["Meus dados ficam separados?", "O produto organiza perfis, sessões e permissões de forma independente para facilitar a operação e o controle de acesso."],
-];
-
-export default function LandingPage() {
-  const [menu, setMenu] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-  return <main className={styles.site}>
-    <header className={styles.header}>
-      <Link href="/" className={styles.brand}><Logo /></Link>
-      <nav className={menu ? styles.navOpen : styles.nav} aria-label="Navegação principal">
-        <a href="#recursos" onClick={()=>setMenu(false)}>RECURSOS</a><a href="#processo" onClick={()=>setMenu(false)}>COMO FUNCIONA</a><a href="#precos" onClick={()=>setMenu(false)}>PREÇOS</a><a href="#faq" onClick={()=>setMenu(false)}>DÚVIDAS</a>
-        <Link href="/admin" className={styles.navCta}>ABRIR PAINEL <ArrowRight size={15}/></Link>
-      </nav>
-      <button className={styles.menuButton} onClick={()=>setMenu(!menu)} aria-label="Abrir menu">{menu ? <X/> : <Menu/>}</button>
-    </header>
-
-    <section className={styles.hero}>
-      <div className={styles.heroCopy}>
-        <span className={styles.kicker}><i/> CONTEÚDO EM ESCALA. CONTROLE EM UM SÓ LUGAR.</span>
-        <h1>Transforme sua operação de vídeos curtos.</h1>
-        <p>Planeje, adapte, publique e acompanhe conteúdos para TikTok, Reels e Shorts com uma central feita para equipes que querem crescer.</p>
-        <div className={styles.heroActions}><a href="#precos" className={styles.primary}>CONHECER PLANOS <ArrowRight size={17}/></a><Link href="/admin" className={styles.secondary}><Play size={16}/> VER O PAINEL</Link></div>
-        <div className={styles.trust}><span><Check/> Sem fidelidade</span><span><Check/> Configuração guiada</span><span><Check/> Dados exportáveis</span></div>
-      </div>
-      <div className={styles.productCard}>
-        <div className={styles.cardTop}><span>VISÃO DA OPERAÇÃO</span><span className={styles.live}><i/> AO VIVO</span></div>
-        <strong>4,9 mi</strong><small>VISUALIZAÇÕES CONSOLIDADAS</small>
-        <div className={styles.chart}>{[25,32,30,43,48,54,51,68,63,75,82,96].map((h,i)=><i key={i} style={{height:`${h}%`}}/>)}</div>
-        <div className={styles.metrics}><div><b>10,4%</b><span>ENGAJAMENTO</span></div><div><b>R$ 112 mil</b><span>RECEITA</span></div><div><b>1.142</b><span>PUBLICAÇÕES</span></div></div>
-      </div>
-    </section>
-
-    <section className={styles.strip}><span>PLANEJAR</span><i/> <span>ADAPTAR</span><i/> <span>PUBLICAR</span><i/> <span>ANALISAR</span></section>
-
-    <section id="recursos" className={styles.section}>
-      <div className={styles.sectionHead}><span>01 — A PLATAFORMA</span><h2>Tudo que sua operação precisa para sair do improviso.</h2><p>Menos abas, planilhas e processos soltos. Mais clareza para decidir o próximo conteúdo.</p></div>
-      <div className={styles.featureGrid}>{features.map(({icon:Icon,title,text},i)=><article key={title}><span>0{i+1}</span><Icon/><h3>{title}</h3><p>{text}</p></article>)}</div>
-    </section>
-
-    <section id="processo" className={styles.process}>
-      <div><span>02 — COMO FUNCIONA</span><h2>Da ideia ao relatório em três etapas.</h2></div>
-      <ol><li><b>01</b><div><h3>Conecte e organize</h3><p>Cadastre seus canais, perfis, dispositivos e responsáveis.</p></div></li><li><b>02</b><div><h3>Produza e programe</h3><p>Prepare variações e distribua o calendário entre as plataformas.</p></div></li><li><b>03</b><div><h3>Meça e melhore</h3><p>Compare resultados e replique o que realmente performa.</p></div></li></ol>
-    </section>
-
-    <section id="precos" className={styles.section}>
-      <div className={styles.sectionHead}><span>03 — PLANOS</span><h2>Escolha o tamanho da sua operação.</h2><p>Comece agora e aumente a capacidade quando precisar.</p></div>
-      <div className={styles.pricing}>{plans.map(plan=><article key={plan.name} className={plan.popular ? styles.popular : ""}>{plan.popular&&<em>MAIS ESCOLHIDO</em>}<h3>{plan.name}</h3><p>{plan.description}</p><div className={styles.price}><span>R$</span><b>{plan.price}</b><small>/mês</small></div><a href="mailto:contato@tk2pharmpro.com?subject=Quero conhecer o plano TK2PHARMPRO">COMEÇAR AGORA <ArrowRight size={16}/></a><ul>{plan.items.map(item=><li key={item}><Check size={15}/>{item}</li>)}</ul></article>)}</div>
-    </section>
-
-    <section id="faq" className={styles.faq}><div><span>04 — PERGUNTAS</span><h2>O que você precisa saber.</h2><p>Ainda ficou alguma dúvida? Fale com nosso time.</p><a href="mailto:contato@tk2pharmpro.com">FALAR COM ESPECIALISTA <ArrowRight size={15}/></a></div><div>{faqs.map(([q,a],i)=><article key={q}><button onClick={()=>setOpenFaq(openFaq===i?null:i)}><span>{q}</span><ChevronDown className={openFaq===i?styles.rotate:""}/></button>{openFaq===i&&<p>{a}</p>}</article>)}</div></section>
-
-    <section className={styles.cta}><Logo/><h2>Pronto para operar com mais controle?</h2><p>Conheça o painel e veja como centralizar sua rotina de vídeos curtos.</p><Link href="/admin">ABRIR PAINEL DEMONSTRATIVO <ArrowRight/></Link></section>
-    <footer className={styles.footer}><Logo compact/><p>© 2026 TK2PHARMPRO. TODOS OS DIREITOS RESERVADOS.</p><div><a href="#recursos">RECURSOS</a><a href="#precos">PREÇOS</a><a href="mailto:contato@tk2pharmpro.com">CONTATO</a></div></footer>
-  </main>;
-}
+const faqs=[["Como o TK2PHARMPRO organiza diferentes contas?","Cada perfil possui seus próprios dados operacionais, calendário, sessão e indicadores dentro do painel."],["Quais plataformas posso gerenciar?","O produto foi pensado para fluxos de TikTok, Instagram Reels e YouTube Shorts."],["Consigo preparar variações dos vídeos?","Sim. O editor permite organizar cortes, formatos, legendas, cores e overlays para cada destino."],["O painel mostra alcance e engajamento?","Sim. Você acompanha visualizações, engajamento, publicações, receita e resultados por conta e período."],["Posso exportar os dados?","Sim. As tabelas operacionais e os relatórios podem ser exportados em CSV."],["Existe plano para equipes?","Sim. O plano Agência inclui mais perfis, múltiplos usuários e onboarding dedicado."]];
+export default function LandingPage(){const[menu,setMenu]=useState(false);const[faq,setFaq]=useState<number|null>(null);return <main className={styles.site}>
+<nav className={styles.navbar}><Link href="/" className={styles.miniLogo}><Logo compact/></Link><div className={menu?styles.navOpen:styles.links}><a href="#inicio">Início</a><a href="#precos">Preços</a><a href="#resultados">Resultados</a><a href="#processo">Processo</a><a href="#faq">Dúvidas</a><Link href="/admin" className={styles.apply}>Painel</Link></div><button className={styles.mobileMenu} onClick={()=>setMenu(!menu)} aria-label="Menu">{menu?<X/>:<Menu/>}</button></nav>
+<section id="inicio" className={styles.hero}><span className={styles.spots}>↗ Vagas abertas para novos projetos</span><h1><em>Conteúdo</em> em escala<br/>para <em>sua marca</em></h1><p>O TK2PHARMPRO centraliza perfis, publicações e resultados para transformar sua operação de vídeos curtos.</p><div className={styles.heroVisual}><div className={styles.mockWindow}><div className={styles.mockTop}><i/><i/><i/><span>VISÃO GERAL</span></div><div className={styles.mockStats}><div><span>VISUALIZAÇÕES</span><b>4,9 mi</b><small>+41,5%</small></div><div><span>ENGAJAMENTO</span><b>10,4%</b><small>+18,2%</small></div><div><span>GANHOS</span><b>R$ 112 mil</b><small>+24,8%</small></div></div><div className={styles.mockChart}>{[26,31,29,42,48,45,57,66,61,72,78,94].map((n,i)=><i key={i} style={{height:`${n}%`}}/>)}</div></div></div><div className={styles.heroButtons}><a href="#precos">Conhecer planos <ArrowRight/></a><Link href="/admin">Ver painel <Play/></Link></div></section>
+<section id="resultados" className={styles.results}><Tag>Resultados</Tag><h2>Deixe os <em>resultados</em><br/>falarem por nós.</h2><p>Uma visão simples e direta do que sua operação está produzindo.</p><div className={styles.resultCards}>{[["Visualizações","4,9 mi","+41,5%",[22,34,31,48,52,70,64,88]],["Engajamento","10,4%","+18,2%",[18,27,42,38,57,61,75,90]],["Publicações","1.142","+24,8%",[31,25,47,52,48,70,81,96]]].map(([name,value,growth,bars])=><article key={String(name)}><h3>{name}</h3><small>Resumo consolidado do período</small><div className={styles.resultValue}><b>{value}</b><span>{growth}</span></div><p>Últimos 30 dias</p><div className={styles.bars}>{(bars as number[]).map((n,i)=><i key={i} style={{height:`${n}%`}}/>)}</div><hr/><label>Desempenho por canal</label><div className={styles.lines}><i/><i/><i/></div></article>)}</div></section>
+<section className={styles.statement}><div>Operações que dependem de várias planilhas, aparelhos e abas perdem tempo todos os dias. O TK2PHARMPRO reúne o fluxo inteiro em <em>um só lugar.</em></div><a href="#precos">Começar agora <ArrowRight/></a></section>
+<section className={styles.services}><Tag>Recursos</Tag><h2>Como podemos <em>ajudar?</em></h2><p>Do planejamento à análise, as ferramentas para sua equipe trabalhar melhor.</p><div className={styles.serviceGrid}><article className={styles.serviceWide}><CalendarClock/><h3>Gestão de conteúdo</h3><p>Calendário, agendamento, filas de aprovação e publicação multicanal em uma central.</p></article><article><MonitorSmartphone/><h3>Perfis e dispositivos</h3><p>Organize contas, sessões e aparelhos autorizados.</p></article><article><BarChart3/><h3>Analytics completo</h3><p>Descubra os conteúdos e canais que mais performam.</p></article></div></section>
+<section id="precos" className={styles.comparison}><Tag>Comparação</Tag><h2>Mas por que trabalhar<br/><em>com a gente?</em></h2><div className={styles.compareGrid}><article><h3>Processo manual</h3>{["Informações espalhadas","Publicação sem calendário","Resultados sem comparação","Equipe perdendo tempo","Decisões no improviso"].map(x=><p key={x}><X/>{x}</p>)}</article><article><h3>TK2PHARMPRO</h3>{["Operação centralizada","Calendário multicanal","Relatórios por período","Perfis organizados","Fluxo pronto para crescer"].map(x=><p key={x}><Check/>{x}</p>)}</article></div><div className={styles.plans}><div><span>INICIAL</span><b>R$ 297<small>/mês</small></b><p>Até 5 perfis e analytics essenciais.</p></div><div><span>PROFISSIONAL</span><b>R$ 697<small>/mês</small></b><p>Até 24 perfis e ferramentas completas.</p></div><div><span>AGÊNCIA</span><b>R$ 1.497<small>/mês</small></b><p>Até 60 perfis e múltiplos usuários.</p></div></div></section>
+<section id="processo" className={styles.process}><Tag>Processo</Tag><h2>Um processo simples em<br/>3 etapas para <em>crescer.</em></h2><p>Configure a operação, distribua conteúdo e use os dados para melhorar.</p><div className={styles.steps}><article><Search/><h3>Análise da operação</h3><p>Organizamos canais, contas, equipe e objetivos para definir a estrutura certa.</p></article><article><Settings2/><h3>Configuração</h3><p>Preparamos perfis, calendário, permissões, integrações e indicadores.</p></article><article><TrendingUp/><h3>Otimização</h3><p>Você acompanha os resultados e replica o que funciona melhor.</p></article></div></section>
+<section id="faq" className={styles.faq}>{faqs.map(([q,a],i)=><article key={q}><button onClick={()=>setFaq(faq===i?null:i)}><span>{q}</span><b>{faq===i?"−":"+"}</b></button>{faq===i&&<p>{a}</p>}</article>)}</section>
+<section className={styles.cta}><h2>Pronto para <em>organizar</em><br/>sua operação?</h2><p>Abra o painel demonstrativo e conheça o fluxo completo do TK2PHARMPRO.</p><Link href="/admin">Abrir painel <ArrowRight/></Link></section>
+<footer className={styles.footer}><div className={styles.footerLogo}><Logo compact/></div><div><h3>Receba novidades</h3><p>Cadastre seu e-mail para acompanhar atualizações do produto.</p><form onSubmit={e=>e.preventDefault()}><input type="email" placeholder="voce@empresa.com" required/><button>CADASTRAR</button></form></div><div><span>Páginas</span><a href="#inicio">Início</a><a href="#precos">Preços</a><a href="#processo">Processo</a></div><div><span>Informações</span><a href="#faq">Dúvidas</a><Link href="/admin">Painel</Link><a href="mailto:contato@tk2pharmpro.com">Contato</a></div></footer>
+</main>}
+function Tag({children}:{children:React.ReactNode}){return <span className={styles.tag}>{children}</span>}
