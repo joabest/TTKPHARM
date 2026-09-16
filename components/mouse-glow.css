@@ -1,0 +1,53 @@
+@media (pointer: fine) {
+  .ttk-mouse-glow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 620px;
+    height: 620px;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+    background: radial-gradient(circle, rgba(37,244,238,.24) 0%, rgba(8,127,187,.15) 28%, rgba(37,244,238,.06) 48%, transparent 72%);
+    filter: blur(42px);
+    transition: opacity .3s ease;
+    will-change: transform;
+    mix-blend-mode: screen;
+  }
+  .ttk-custom-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    box-shadow: 0 0 8px rgba(255,255,255,.95), 0 0 18px rgba(37,244,238,.55);
+    transition: width .16s ease,height .16s ease,box-shadow .16s ease,opacity .2s ease;
+    will-change: transform;
+  }
+  .ttk-custom-cursor.is-interactive {
+    width: 14px;
+    height: 14px;
+    box-shadow: 0 0 10px #fff,0 0 24px rgba(37,244,238,.95),0 0 44px rgba(8,127,187,.7);
+  }
+  .ttk-landing-root, .ttk-landing-root * { cursor: none !important; }
+  .ttk-landing-root article,
+  .ttk-landing-root [class*="mockWindow"],
+  .ttk-landing-root [class*="plans"] > div {
+    transition: transform .28s ease,border-color .28s ease,box-shadow .28s ease,background-color .28s ease !important;
+  }
+  .ttk-landing-root article:hover,
+  .ttk-landing-root [class*="mockWindow"]:hover,
+  .ttk-landing-root [class*="plans"] > div:hover {
+    border-color: rgba(37,244,238,.92) !important;
+    box-shadow: 0 0 0 1px rgba(37,244,238,.18),0 0 22px rgba(37,244,238,.25),0 0 54px rgba(8,127,187,.18) !important;
+  }
+}
+@media (pointer: coarse) {
+  .ttk-mouse-glow,.ttk-custom-cursor { display:none !important; }
+}
