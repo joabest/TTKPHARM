@@ -15,7 +15,7 @@
 .sidebar{background:var(--sidebar);border-right-color:#29292d}
 .brand-row{padding:2px 6px 30px}
 .logo{display:flex;align-items:center;gap:8px;color:#f1efe9;font-size:initial;letter-spacing:initial}
-.logo svg,.logo img{width:170px;height:auto;display:block}
+.logo svg,.logo img{width:194px;height:54px;display:block;object-fit:contain;object-position:left center}
 .logo span{font-size:10px;line-height:1;color:#85858c;letter-spacing:1.7px;white-space:nowrap}
 .logo span b{color:#f1efe9;font-weight:800}.logo.compact span{display:none}
 .sidebar nav button.active{color:#f7f8f8;background:#222225;box-shadow:inset 3px 0 #f1f1f2}
@@ -33,4 +33,4 @@
 .account-avatar{border-radius:50%;color:#eee;background:#51515a}.badge i{background:var(--positive)}.revenue{color:var(--positive)}
 .toast{background:#29292d;border-color:#49494f;color:#f2f2f3}
 .module-page{display:grid;gap:14px}.module-heading{min-height:118px;border:1px solid #313136;background:#19191c;border-radius:8px;padding:20px;display:flex;justify-content:space-between;align-items:center}.module-heading h2{font-size:22px;margin:7px 0 5px;letter-spacing:-.5px}.module-heading p{font-size:11px;color:#8e8e96;margin:0}.eyebrow{font-size:8px;letter-spacing:1.5px;color:#696971;text-transform:uppercase}.module-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.module-table{min-height:430px}.module-table td{height:50px}.module-status{color:#6fd0aa;font-weight:650}.module-table th:last-child,.module-table td:last-child{text-align:right}.module-table tbody tr:hover{background:#2a2a2e}.content{background:#19191c;min-height:calc(100vh - 78px)}.workspace{background:#19191c}.stat-card,.panel,.mini{background:#242427}.periods,.global-search,.table-actions label{background:#242427}.workspace>header{background:#18181a}.sidebar{background:#111113}.ring:after{background:#242427}
-@media(max-width:700px){.module-heading{align-items:flex-start;gap:18px;flex-direction:column}.module-heading .primary{width:100%;justify-content:center}.module-stats{grid-template-columns:1fr}.logo svg,.logo img{width:164px}}
+@media(max-width:700px){.module-heading{align-items:flex-start;gap:18px;flex-direction:column}.module-heading .primary{width:100%;justify-content:center}.module-stats{grid-template-columns:1fr}.logo svg,.logo img{width:190px;height:52px}}

@@ -3,7 +3,7 @@ import Image from "next/image";
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`logo ${compact ? "compact" : ""}`} aria-label="TTKFARMPRO">
-      <Image src="/ttkfarmpro-logo.svg" alt="TTKFARMPRO" width={520} height={72} priority />
+      <Image src="/tk2pharmpro-logo.png" alt="TK2PHARMPRO" width={1536} height={544} priority />
     </div>
   );
 }
