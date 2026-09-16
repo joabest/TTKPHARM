@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Activity, Bell, CalendarDays, ChevronDown, CircleHelp, Clapperboard, DollarSign,
   Download, Eye, Gauge, Heart, LayoutDashboard, LogOut, Menu, MessageCircle,
   MonitorSmartphone, MoreHorizontal, Play, Search, Send, Settings, Share2,
-  Smartphone, Sparkles, TrendingUp, Users, Wifi, X, Zap, ChevronsUpDown
+  Smartphone, TrendingUp, Wifi, X, Zap, ChevronsUpDown, Plus, Pencil
   , Music2, SlidersHorizontal, Globe2, ShieldCheck, Fingerprint
 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -40,20 +40,29 @@ export default function Dashboard() {
   const [query, setQuery] = useState("");
   const [sidebar, setSidebar] = useState(false);
   const [active, setActive] = useState("Visão geral");
-  const [toast, setToast] = useState("");
+  const [dialog, setDialog] = useState<"content"|"profile"|"period"|"plan"|null>(null);
+  const [profile, setProfile] = useState({name:"Joab Silva",email:"joab@tk2pharmpro.com"});
+  const [created, setCreated] = useState<Record<string,string[][]>>({});
   const data = periodData[period];
   const filtered = useMemo(() => accounts.filter(a => `${a.name} ${a.handle} ${a.device}`.toLowerCase().includes(query.toLowerCase())), [query]);
 
-  function flash(message:string){ setToast(message); window.setTimeout(()=>setToast(""),2400); }
+  useEffect(()=>{
+    const savedProfile=localStorage.getItem("tk2-profile");
+    const savedRows=localStorage.getItem("tk2-created");
+    if(savedProfile) setProfile(JSON.parse(savedProfile));
+    if(savedRows) setCreated(JSON.parse(savedRows));
+  },[]);
+  function saveProfile(next:{name:string;email:string}){setProfile(next);localStorage.setItem("tk2-profile",JSON.stringify(next));setDialog(null)}
+  function addRow(module:string,row:string[]){const next={...created,[module]:[...(created[module]||[]),row]};setCreated(next);localStorage.setItem("tk2-created",JSON.stringify(next));setDialog(null)}
   function exportCsv(){
     const rows = [["Conta","Usuário","Dispositivo","Status","Visualizações","Engajamento","Ganhos"], ...filtered.map(a=>[a.name,a.handle,a.device,a.status,a.views,a.engagement,a.revenue])];
     const blob = new Blob([rows.map(r=>r.join(";")).join("\n")],{type:"text/csv;charset=utf-8"});
-    const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="ttkfarmpro-relatorio.csv"; a.click(); URL.revokeObjectURL(url); flash("Relatório exportado com sucesso");
+    const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="tk2pharmpro-relatorio.csv"; a.click(); URL.revokeObjectURL(url);
   }
 
   return (
     <main className="app-shell">
-      {toast && <div className="toast">{toast}</div>}
+      {dialog&&<DashboardDialog kind={dialog} module={active} profile={profile} onClose={()=>setDialog(null)} onProfile={saveProfile} onCreate={addRow}/>} 
       {sidebar && <button className="overlay" aria-label="Fechar menu" onClick={()=>setSidebar(false)} />}
       <aside className={`sidebar ${sidebar ? "open" : ""}`}>
         <div className="brand-row"><Logo /><button className="icon-button mobile-close" onClick={()=>setSidebar(false)}><X size={18}/></button></div>
@@ -61,16 +70,16 @@ export default function Dashboard() {
         <nav>{nav.map(([Icon,label])=><button key={label} className={active===label?"active":""} onClick={()=>{setActive(label);setSidebar(false)}}><Icon size={17}/><span>{label}</span>{label==="Dispositivos"&&<small>24</small>}</button>)}</nav>
         <p className="section-label general"><span>Geral</span><ChevronDown size={12}/></p>
         <nav><button className={active==="Configurações"?"active":""} onClick={()=>{setActive("Configurações");setSidebar(false)}}><Settings size={17}/>Configurações</button><button className={active==="Central de ajuda"?"active":""} onClick={()=>{setActive("Central de ajuda");setSidebar(false)}}><CircleHelp size={17}/>Central de ajuda</button></nav>
-        <div className="system-card"><Zap size={26}/><b>Plano Profissional</b><div className="progress"><i/></div><p>20 de 24 dispositivos em uso.<br/>Faça upgrade para ampliar sua operação.</p><button onClick={()=>flash("Gerenciamento do plano aberto")}>Gerenciar plano <span>›</span></button></div>
-        <div className="profile"><div className="avatar">JS</div><div><b>Joab Silva</b><span>joab@tk2pharmpro.com</span></div><button title="Opções da conta" onClick={()=>flash("Menu da conta aberto")}><ChevronsUpDown size={15}/></button></div>
+        <div className="sidebar-footer"><div className="system-card"><Zap size={26}/><b>Plano Profissional</b><div className="progress"><i/></div><p>20 de 24 dispositivos em uso.<br/>Faça upgrade para ampliar sua operação.</p><button onClick={()=>setDialog("plan")}>GERENCIAR PLANO <span>›</span></button></div>
+        <div className="profile" onClick={()=>setDialog("profile")} role="button" tabIndex={0}><div className="avatar">{profile.name.split(" ").map(v=>v[0]).slice(0,2).join("").toUpperCase()}</div><div><b>{profile.name}</b><span>{profile.email}</span></div><button title="Editar perfil"><Pencil size={14}/></button></div></div>
       </aside>
 
       <section className="workspace">
-        <header><button className="icon-button menu-button" onClick={()=>setSidebar(true)}><Menu size={20}/></button><div><h1>{active}</h1><p>Acompanhe os resultados da sua operação em tempo real.</p></div><div className="header-actions"><label className="global-search"><Search size={16}/><input placeholder="Buscar contas, aparelhos..." value={query} onChange={e=>setQuery(e.target.value)}/><kbd>⌘ K</kbd></label><button className="icon-button notify"><Bell size={18}/><i/></button><button className="primary" onClick={()=>flash("Fluxo de novo conteúdo iniciado")}><Sparkles size={16}/>Novo conteúdo</button></div></header>
+        <header><button className="icon-button menu-button" onClick={()=>setSidebar(true)}><Menu size={20}/></button><div><h1>{active}</h1><p>Acompanhe os resultados da sua operação em tempo real.</p></div><div className="header-actions"><label className="global-search"><Search size={16}/><input placeholder="Buscar contas, aparelhos..." value={query} onChange={e=>setQuery(e.target.value)}/><kbd>⌘ K</kbd></label><button className="icon-button notify" aria-label="Notificações"><Bell size={18}/><i/></button><button className="primary" onClick={()=>setDialog("content")}><Plus size={16}/>NOVO CONTEÚDO</button></div></header>
 
         <div className="content">
-          {active !== "Visão geral" ? <ModuleView module={active} query={query} setQuery={setQuery} flash={flash}/> : <>
-          <div className="toolbar"><div className="periods">{(Object.keys(periodData) as Period[]).map(p=><button key={p} className={period===p?"selected":""} onClick={()=>setPeriod(p)}>{p}</button>)}</div><div className="toolbar-actions"><button onClick={exportCsv}><Download size={15}/>Exportar</button><button onClick={()=>flash("Filtro personalizado selecionado")}><CalendarDays size={15}/>Período personalizado<ChevronDown size={14}/></button></div></div>
+          {active !== "Visão geral" ? <ModuleView module={active} query={query} setQuery={setQuery} created={created[active]||[]} onAction={()=>setDialog("content")}/> : <>
+          <div className="toolbar"><div className="periods">{(Object.keys(periodData) as Period[]).map(p=><button key={p} className={period===p?"selected":""} onClick={()=>setPeriod(p)}>{p}</button>)}</div><div className="toolbar-actions"><button onClick={exportCsv}><Download size={15}/>EXPORTAR</button><button onClick={()=>setDialog("period")}><CalendarDays size={15}/>PERÍODO<ChevronDown size={14}/></button></div></div>
 
           <section className="stats-grid">
             <Stat icon={Eye} label="Visualizações totais" value={data.views} detail={`${data.growth} vs. período anterior`} tone="blue"/>
@@ -81,10 +90,10 @@ export default function Dashboard() {
 
           <section className="charts-grid">
             <article className="panel chart-panel"><div className="panel-title"><div><h2><TrendingUp size={18}/>Desempenho da operação</h2><p>Visualizações consolidadas no período</p></div><button className="icon-button"><MoreHorizontal size={18}/></button></div><div className="chart-number"><strong>{data.views}</strong><span>{data.growth}</span></div><div className="chart"><ResponsiveContainer width="100%" height="100%"><AreaChart data={data.chart}><defs><linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#8b7cff" stopOpacity={.32}/><stop offset="100%" stopColor="#8b7cff" stopOpacity={0}/></linearGradient></defs><CartesianGrid vertical={false} stroke="#34343a"/><XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill:"#777b84",fontSize:11}}/><YAxis hide/><Tooltip contentStyle={{background:"#29292d",border:"1px solid #424249",borderRadius:8}}/><Area type="monotone" dataKey="value" stroke="#8b7cff" strokeWidth={2} fill="url(#chartFill)"/></AreaChart></ResponsiveContainer></div></article>
-            <article className="panel devices"><div className="panel-title"><div><h2><Smartphone size={18}/>Saúde dos aparelhos</h2><p>Status dos 24 dispositivos cadastrados</p></div><button className="icon-button"><MoreHorizontal size={18}/></button></div><div className="device-donut"><div className="ring"><div><b>20</b><span>online</span></div></div><div className="legend"><p><i className="online"/>Online <b>20</b></p><p><i className="publishing"/>Publicando <b>2</b></p><p><i className="paused"/>Pausados <b>2</b></p></div></div><div className="quick-metrics"><div><Wifi size={16}/><span>Conexão média<b>98,6%</b></span></div><div><Activity size={16}/><span>Temperatura<b>34°C</b></span></div></div><button className="details" onClick={()=>{setActive("Dispositivos");flash("Exibindo gestão dos dispositivos")}}>Ver todos os dispositivos <span>→</span></button></article>
+            <article className="panel devices"><div className="panel-title"><div><h2><Smartphone size={18}/>Saúde dos aparelhos</h2><p>Status dos 24 dispositivos cadastrados</p></div><button className="icon-button"><MoreHorizontal size={18}/></button></div><div className="device-donut"><div className="ring"><div><b>20</b><span>online</span></div></div><div className="legend"><p><i className="online"/>Online <b>20</b></p><p><i className="publishing"/>Publicando <b>2</b></p><p><i className="paused"/>Pausados <b>2</b></p></div></div><div className="quick-metrics"><div><Wifi size={16}/><span>Conexão média<b>98,6%</b></span></div><div><Activity size={16}/><span>Temperatura<b>34°C</b></span></div></div><button className="details" onClick={()=>setActive("Dispositivos")}>VER TODOS OS DISPOSITIVOS <span>→</span></button></article>
           </section>
 
-          <section className="panel table-panel"><div className="table-header"><div><h2>Contas com melhor desempenho</h2><p>Resultados individuais das contas conectadas</p></div><div className="table-actions"><label><Search size={15}/><input placeholder="Buscar conta..." value={query} onChange={e=>setQuery(e.target.value)}/></label><button onClick={exportCsv}><Download size={15}/>Exportar</button></div></div><div className="table-scroll"><table><thead><tr><th>Conta</th><th>Dispositivo</th><th>Status</th><th>Visualizações</th><th>Engajamento</th><th>Ganhos</th><th/></tr></thead><tbody>{filtered.map((a,i)=><tr key={a.id}><td><div className={`account-avatar av${i}`}>{a.name.slice(0,1)}</div><div><b>{a.name}</b><span>{a.handle}</span></div></td><td><span className="device-cell"><Smartphone size={14}/>{a.device}</span></td><td><span className={`badge ${a.status.toLowerCase()}`}><i/>{a.status}</span></td><td>{a.views}</td><td><b>{a.engagement}</b></td><td className="revenue">{a.revenue}</td><td><button className="icon-button" onClick={()=>flash(`Abrindo detalhes de ${a.name}`)}><MoreHorizontal size={17}/></button></td></tr>)}</tbody></table>{filtered.length===0&&<div className="empty">Nenhuma conta encontrada.</div>}</div></section>
+          <section className="panel table-panel"><div className="table-header"><div><h2>Contas com melhor desempenho</h2><p>Resultados individuais das contas conectadas</p></div><div className="table-actions"><label><Search size={15}/><input placeholder="Buscar conta..." value={query} onChange={e=>setQuery(e.target.value)}/></label><button onClick={exportCsv}><Download size={15}/>EXPORTAR</button></div></div><div className="table-scroll"><table><thead><tr><th>Conta</th><th>Dispositivo</th><th>Status</th><th>Visualizações</th><th>Engajamento</th><th>Ganhos</th><th/></tr></thead><tbody>{filtered.map((a,i)=><tr key={a.id}><td><div className={`account-avatar av${i}`}>{a.name.slice(0,1)}</div><div><b>{a.name}</b><span>{a.handle}</span></div></td><td><span className="device-cell"><Smartphone size={14}/>{a.device}</span></td><td><span className={`badge ${a.status.toLowerCase()}`}><i/>{a.status}</span></td><td>{a.views}</td><td><b>{a.engagement}</b></td><td className="revenue">{a.revenue}</td><td><button className="icon-button" aria-label={`Detalhes de ${a.name}`} onClick={()=>{setQuery(a.handle);setActive("Desempenho")}}><MoreHorizontal size={17}/></button></td></tr>)}</tbody></table>{filtered.length===0&&<div className="empty">Nenhuma conta encontrada.</div>}</div></section>
 
           <section className="mini-grid"><Mini icon={Play} value="386" label="Vídeos publicados"/><Mini icon={Heart} value="126,8 mil" label="Curtidas"/><Mini icon={MessageCircle} value="18,4 mil" label="Comentários"/><Mini icon={Share2} value="32,1 mil" label="Compartilhamentos"/><Mini icon={Send} value="R$ 89,58" label="Receita por conteúdo"/></section>
           </>}
@@ -115,8 +124,25 @@ const moduleConfig: Record<string, { title:string; description:string; action:st
   "Central de ajuda": { title:"Central de ajuda", description:"Encontre orientações para configurar e utilizar o TTKFARMPRO.", action:"Abrir chamado", columns:["Assunto","Categoria","Atualizado","Leitura","Status"], rows:[["Como cadastrar um dispositivo","Primeiros passos","Hoje","4 min","Disponível"],["Como vincular uma conta","Contas","Ontem","3 min","Disponível"],["Entendendo os relatórios","Analytics","12/09/2026","6 min","Disponível"],["Configuração de notificações","Configurações","10/09/2026","2 min","Disponível"]] }
 };
 
-function ModuleView({module,query,setQuery,flash}:{module:string;query:string;setQuery:(v:string)=>void;flash:(v:string)=>void}){
+function downloadRows(name:string, columns:string[], rows:string[][]){
+  const blob=new Blob([[columns,...rows].map(row=>row.join(";")).join("\n")],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download=`tk2pharmpro-${name.toLowerCase().replaceAll(" ","-")}.csv`;link.click();URL.revokeObjectURL(url);
+}
+
+function ModuleView({module,query,setQuery,created,onAction}:{module:string;query:string;setQuery:(v:string)=>void;created:string[][];onAction:()=>void}){
   const config=moduleConfig[module] ?? moduleConfig.Relatórios;
-  const rows=config.rows.filter(row=>row.join(" ").toLowerCase().includes(query.toLowerCase()));
-  return <section className="module-page"><div className="module-heading"><div><span className="eyebrow">TTKFARMPRO / {module}</span><h2>{config.title}</h2><p>{config.description}</p></div><button className="primary" onClick={()=>flash(`${config.action}: ação iniciada`)}><Sparkles size={15}/>{config.action}</button></div><div className="module-stats"><Mini icon={Activity} value={module==="Dispositivos"?"24":"20"} label="Itens cadastrados"/><Mini icon={TrendingUp} value="+18,2%" label="Variação no período"/><Mini icon={Gauge} value="98,6%" label="Disponibilidade"/></div><article className="panel module-table"><div className="table-header"><div><h2>{config.title}</h2><p>Dados demonstrativos prontos para conexão com o backend.</p></div><div className="table-actions"><label><Search size={15}/><input placeholder="Buscar..." value={query} onChange={e=>setQuery(e.target.value)}/></label><button onClick={()=>flash("Dados exportados")}><Download size={15}/>Exportar</button></div></div><div className="table-scroll"><table><thead><tr>{config.columns.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j} className={j===row.length-1?"module-status":""}>{cell}</td>)}</tr>)}</tbody></table>{rows.length===0&&<div className="empty">Nenhum resultado encontrado.</div>}</div></article></section>
+  const allRows=[...created,...config.rows];
+  const rows=allRows.filter(row=>row.join(" ").toLowerCase().includes(query.toLowerCase()));
+  return <section className="module-page"><div className="module-heading"><div><span className="eyebrow">TK2PHARMPRO / {module}</span><h2>{config.title}</h2><p>{config.description}</p></div><button className="primary" onClick={onAction}><Plus size={15}/>{config.action.toUpperCase()}</button></div><div className="module-stats"><Mini icon={Activity} value={String(allRows.length)} label="Itens cadastrados"/><Mini icon={TrendingUp} value="+18,2%" label="Variação no período"/><Mini icon={Gauge} value="98,6%" label="Disponibilidade"/></div><article className="panel module-table"><div className="table-header"><div><h2>{config.title}</h2><p>Registros da operação. Novos itens ficam salvos neste navegador.</p></div><div className="table-actions"><label><Search size={15}/><input placeholder="Buscar..." value={query} onChange={e=>setQuery(e.target.value)}/></label><button onClick={()=>downloadRows(module,config.columns,rows)}><Download size={15}/>EXPORTAR</button></div></div><div className="table-scroll"><table><thead><tr>{config.columns.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j} className={j===row.length-1?"module-status":""}>{cell}</td>)}</tr>)}</tbody></table>{rows.length===0&&<div className="empty">Nenhum resultado encontrado.</div>}</div></article></section>
+}
+
+function DashboardDialog({kind,module,profile,onClose,onProfile,onCreate}:{kind:"content"|"profile"|"period"|"plan";module:string;profile:{name:string;email:string};onClose:()=>void;onProfile:(v:{name:string;email:string})=>void;onCreate:(m:string,r:string[])=>void}){
+  const config=moduleConfig[module] ?? moduleConfig.Publicações;
+  function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();const form=new FormData(e.currentTarget);
+    if(kind==="profile") return onProfile({name:String(form.get("name")),email:String(form.get("email"))});
+    if(kind==="period") return onClose();
+    const target=module==="Visão geral"?"Publicações":module;const targetConfig=moduleConfig[target]??moduleConfig.Publicações;const title=String(form.get("title"));const detail=String(form.get("detail"));const row=targetConfig.columns.map((_,i)=>i===0?title:i===1?detail:i===targetConfig.columns.length-1?"Novo":"—");onCreate(target,row);
+  }
+  if(kind==="plan") return <div className="dialog-backdrop" onMouseDown={onClose}><section className="dialog" onMouseDown={e=>e.stopPropagation()}><button className="dialog-close" onClick={onClose}><X/></button><span className="eyebrow">PLANO ATUAL</span><h2>Profissional</h2><p>Você usa 20 de 24 perfis disponíveis. Para alterar capacidade e cobrança, escolha um plano.</p><div className="plan-options"><button onClick={onClose}>INICIAL · R$ 297</button><button className="selected-plan" onClick={onClose}>PROFISSIONAL · R$ 697</button><button onClick={onClose}>AGÊNCIA · R$ 1.497</button></div></section></div>;
+  return <div className="dialog-backdrop" onMouseDown={onClose}><section className="dialog" onMouseDown={e=>e.stopPropagation()}><button className="dialog-close" onClick={onClose}><X/></button><span className="eyebrow">{kind==="profile"?"CONTA":kind==="period"?"FILTRO":`TK2PHARMPRO / ${module}`}</span><h2>{kind==="profile"?"Editar perfil":kind==="period"?"Período personalizado":config.action}</h2><form onSubmit={submit}>{kind==="profile"?<><label>Nome<input name="name" defaultValue={profile.name} required/></label><label>E-mail<input name="email" type="email" defaultValue={profile.email} required/></label></>:kind==="period"?<><label>Data inicial<input name="from" type="date" required/></label><label>Data final<input name="to" type="date" required/></label></>:<><label>Nome ou título<input name="title" placeholder="Digite um título" required/></label><label>Conta, destino ou detalhe<input name="detail" placeholder="Ex.: @minhaconta" required/></label></>}<div className="dialog-actions"><button type="button" onClick={onClose}>CANCELAR</button><button className="primary" type="submit">SALVAR</button></div></form></section></div>
 }

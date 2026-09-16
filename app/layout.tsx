@@ -6,8 +6,9 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
-  title: "TK2PHARMPRO | Central de Conteúdo",
-  description: "Gerenciamento profissional de dispositivos, contas, conteúdo e resultados.",
+  title: "TK2PHARMPRO | Operação de conteúdo em escala",
+  description: "Planeje, publique e analise conteúdo para TikTok, Reels e Shorts em um único painel.",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
