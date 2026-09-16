@@ -4,10 +4,12 @@ import { useEffect, useRef } from "react";
 
 export default function MouseGlow() {
   const glowRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const glow = glowRef.current;
-    if (!glow) return;
+    const cursor = cursorRef.current;
+    if (!glow || !cursor) return;
 
     let frame = 0;
     let targetX = window.innerWidth / 2;
@@ -19,50 +21,45 @@ export default function MouseGlow() {
       targetX = event.clientX;
       targetY = event.clientY;
       glow.style.opacity = "1";
+      cursor.style.opacity = "1";
+      cursor.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%)`;
     };
 
     const leave = () => {
       glow.style.opacity = "0";
+      cursor.style.opacity = "0";
+    };
+
+    const over = (event: MouseEvent) => {
+      const el = event.target as HTMLElement | null;
+      const interactive = el?.closest("a,button,input,article,[role='button']");
+      cursor.classList.toggle("is-interactive", Boolean(interactive));
     };
 
     const animate = () => {
-      currentX += (targetX - currentX) * 0.105;
-      currentY += (targetY - currentY) * 0.105;
+      currentX += (targetX - currentX) * 0.09;
+      currentY += (targetY - currentY) * 0.09;
       glow.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
       frame = requestAnimationFrame(animate);
     };
 
     window.addEventListener("mousemove", move, { passive: true });
+    window.addEventListener("mouseover", over, { passive: true });
     document.documentElement.addEventListener("mouseleave", leave);
     animate();
 
     return () => {
       window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseover", over);
       document.documentElement.removeEventListener("mouseleave", leave);
       cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div
-      ref={glowRef}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        left: 0,
-        top: 0,
-        width: "520px",
-        height: "520px",
-        borderRadius: "9999px",
-        pointerEvents: "none",
-        zIndex: 0,
-        opacity: 0,
-        background: "radial-gradient(circle, rgba(254,44,85,.24) 0%, rgba(254,44,85,.13) 28%, rgba(254,44,85,.055) 48%, transparent 72%)",
-        filter: "blur(34px)",
-        transition: "opacity .35s ease",
-        willChange: "transform",
-        mixBlendMode: "screen",
-      }}
-    />
+    <>
+      <div ref={glowRef} className="ttk-mouse-glow" aria-hidden="true" />
+      <div ref={cursorRef} className="ttk-custom-cursor" aria-hidden="true" />
+    </>
   );
 }
