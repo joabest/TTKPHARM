@@ -5,7 +5,7 @@ import {
   Activity, Bell, CalendarDays, ChevronDown, CircleHelp, Clapperboard, DollarSign,
   Download, Eye, Gauge, Heart, LayoutDashboard, LogOut, Menu, MessageCircle,
   MonitorSmartphone, MoreHorizontal, Play, Search, Send, Settings, Share2,
-  Smartphone, Sparkles, TrendingUp, Users, Wifi, X
+  Smartphone, Sparkles, TrendingUp, Users, Wifi, X, Zap, ChevronsUpDown
 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Logo } from "./logo";
@@ -55,12 +55,12 @@ export default function Dashboard() {
       {sidebar && <button className="overlay" aria-label="Fechar menu" onClick={()=>setSidebar(false)} />}
       <aside className={`sidebar ${sidebar ? "open" : ""}`}>
         <div className="brand-row"><Logo /><button className="icon-button mobile-close" onClick={()=>setSidebar(false)}><X size={18}/></button></div>
-        <p className="section-label">PAINEL PRINCIPAL</p>
+        <p className="section-label"><span>Menu principal</span><ChevronDown size={12}/></p>
         <nav>{nav.map(([Icon,label])=><button key={label} className={active===label?"active":""} onClick={()=>{setActive(label);setSidebar(false)}}><Icon size={17}/><span>{label}</span>{label==="Dispositivos"&&<small>24</small>}</button>)}</nav>
-        <p className="section-label general">GERAL</p>
+        <p className="section-label general"><span>Geral</span><ChevronDown size={12}/></p>
         <nav><button className={active==="Configurações"?"active":""} onClick={()=>{setActive("Configurações");setSidebar(false)}}><Settings size={17}/>Configurações</button><button className={active==="Central de ajuda"?"active":""} onClick={()=>{setActive("Central de ajuda");setSidebar(false)}}><CircleHelp size={17}/>Central de ajuda</button></nav>
-        <div className="system-card"><div className="system-head"><span className="pulse"/><b>Sistema operacional</b></div><div className="system-row"><span>20 de 24 aparelhos</span><b>83%</b></div><div className="progress"><i/></div><p>Todos os serviços funcionando normalmente.</p></div>
-        <div className="profile"><div className="avatar">JS</div><div><b>Joab Silva</b><span>Administrador</span></div><button title="Sair" onClick={()=>flash("Sessão encerrada (demonstração)")}><LogOut size={17}/></button></div>
+        <div className="system-card"><Zap size={26}/><b>Plano Profissional</b><div className="progress"><i/></div><p>20 de 24 dispositivos em uso.<br/>Faça upgrade para ampliar sua operação.</p><button onClick={()=>flash("Gerenciamento do plano aberto")}>Gerenciar plano <span>›</span></button></div>
+        <div className="profile"><div className="avatar">JS</div><div><b>Joab Silva</b><span>joab@tk2pharmpro.com</span></div><button title="Opções da conta" onClick={()=>flash("Menu da conta aberto")}><ChevronsUpDown size={15}/></button></div>
       </aside>
 
       <section className="workspace">
